@@ -5,11 +5,10 @@ const button2 =  document.querySelector('.see');
 
 button2.addEventListener('click', function(e){
     e.preventDefault();
-    fetch('http://localhost:4000/prod').then(e=>{
+    fetch('http://localhost:3020/products').then(e=>{
         return e.json()        
     }).then(resp=>{
         console.log(resp);
-        
     })
     .catch(e=>{
         console.log(e);
@@ -23,7 +22,7 @@ button1.addEventListener("click",(e)=>{
     };
     dataObj.name = inputs[0].value;
     dataObj.price = inputs[1].value;
-    fetch('http://localhost:4000/prod',{
+    fetch('http://localhost:3020/products',{
         method:"POST",
         headers:{
             "Content-Type":"application/json"

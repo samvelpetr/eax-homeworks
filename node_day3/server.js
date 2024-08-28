@@ -11,11 +11,11 @@ const client = new MongoClient('mongodb://localhost:27017');
 
 client.connect();
 
-const db = client.db('example');
+const db = client.db('samvel');
 
 
 
-app.post('/prod', async (req,res)=>{
+app.post('/products', async (req,res)=>{
     const collection = db.collection('products');
     const {name , price} = req.body;
     console.log({
@@ -35,7 +35,7 @@ app.post('/prod', async (req,res)=>{
     res.send("Data is inserted to DB")
 })
 
-app.get('/prod',async (req,res)=>{
+app.get('/products',async (req,res)=>{
     const collection = db.collection('products');
     let data =  await collection.find({}).toArray();
     console.log("data is recived from DB ");
@@ -46,7 +46,7 @@ app.get('/prod',async (req,res)=>{
 
 
 
-app.listen(4000,()=>{
-    console.log(`Server running in port 4000`);
+app.listen(3020,()=>{
+    console.log(`Server running in port 3020`);
     
 });

@@ -2,37 +2,49 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {MongoClient} = require('mongodb');
 const cors  =  require('cors');
+const path = require('path');
+const multer = require('multer');
 const app = express();
+
+const client = new MongoClient('mongodb://localhost:27017');
+app.use(express.static(path.join(__dirname,'public')));
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
-const client = new MongoClient('mongodb://localhost:27017');
-
-client.connect();
+client.connect().then(e=>{
+    
+})
+.catch(e=>console.log(e));
 
 const db = client.db('samvel');
+// const upload = multer({ dest: 'public/images/' }); 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-
-
-app.post('/products', async (req,res)=>{
+app.post('/products', upload.single('image'), async (req,res)=>{
     const collection = db.collection('products');
     const {name , price} = req.body;
-    console.log({
+
+    if (!req.file) {
+        return res.status(400).send("No file uploaded.");
+    }
+
+    const base64Image = req.file.buffer.toString('base64');
+    const image = `data:${req.file.mimetype};base64,${base64Image}`;
+    
+    await collection.insertOne({
         name,
-        price
-    });
-    collection.insertOne({
-        name,
-        price
-    }).then((e)=>{
-        console.log("successfuly inserted to DB");
-        
-    }).catch(e=>{
-        console.log(e);
-        
+        price,
+        image
     })
+    
+    console.log("successfuly inserted to DB");
+        
     res.send("Data is inserted to DB")
+})
+app.get('/',(req,res)=>{
+    res.sendFile(path.join(__dirname,'public/index.html'));
 })
 
 app.get('/products',async (req,res)=>{
